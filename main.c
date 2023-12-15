@@ -56,7 +56,7 @@ void print_mat(mat_t *mat){
   int i, j;
   for(i = 0; i < mat->nr; ++i){
     for(j = 0; j < mat->nc; ++j){
-      printf("%lf ", mat->m[i][j]);
+      printf("%0.4lf ", mat->m[i][j]);
     }
     printf("\n");
   }
@@ -161,7 +161,7 @@ void std_normalize(double *arr, int n){
 void print_array(double *arr, int n){
   int i;
   for(i = 0; i < n; ++i){
-    printf("%lf ", arr[i]);
+    printf("%0.4lf ", arr[i]);
   }
   printf("\n");
   return;
@@ -278,7 +278,7 @@ sorted_t* sort_each_row(mat_t* mat){
   return sd;
 }
 
-sorted_t* get_pd_mat_sort_xy(mat_t* mat, sorted_t* sd){
+sorted_t* get_dist_mat_sort_xy(mat_t* mat, sorted_t* sd){
   sorted_t* res = (sorted_t*) malloc(sizeof(sorted_t));
   res->mmat = init_mat(mat->nr, mat->nc);
   res->midx = init_mat_int(mat->nr, mat->nc);
@@ -294,10 +294,10 @@ sorted_t* get_pd_mat_sort_xy(mat_t* mat, sorted_t* sd){
 }
 
 int main(){
-  double  x[3] = {1, 2, 3}; // 1st random variable 
-  double  y[3] = {1, 5, 4}; // 2nd random variable
+  double  x[4] = {1, 2, 3, 4}; // 1st random variable 
+  double  y[4] = {1, 5, 4, 9}; // 2nd random variable
   int k = 3; // num nearest neighbors
-  int n = 3; // num time snapshots
+  int n = 4; // num time snapshots
 
   remove_mean(x, n);
   remove_mean(y, n);
@@ -325,50 +325,50 @@ int main(){
   printf("pd:\n");
   print_array(pd, n_pd);
 
-  mat_t *pd_mat_x = square_form(pd_x, n_pd);
-  mat_t *pd_mat_y = square_form(pd_y, n_pd);
-  mat_t *pd_mat = square_form(pd, n_pd);
+  mat_t *dist_mat_x = square_form(pd_x, n);
+  mat_t *dist_mat_y = square_form(pd_y, n);
+  mat_t *dist_mat = square_form(pd, n);
 
   printf("\n");
-  printf("pd_mat_x:\n");
-  print_mat(pd_mat_x);
-  printf("pd_mat_y:\n");
-  print_mat(pd_mat_y);
-  printf("pd_mat:\n");
-  print_mat(pd_mat);
+  printf("dist_mat_x:\n");
+  print_mat(dist_mat_x);
+  printf("dist_mat_y:\n");
+  print_mat(dist_mat_y);
+  printf("dist_mat:\n");
+  print_mat(dist_mat);
 
-  sorted_t *pd_mat_sort = sort_each_row(pd_mat);
-  sorted_t *pd_mat_sort_x = 
-    get_pd_mat_sort_xy(pd_mat_x, pd_mat_sort);
-  sorted_t *pd_mat_sort_y = 
-    get_pd_mat_sort_xy(pd_mat_y, pd_mat_sort);
+  sorted_t *dist_mat_sort = sort_each_row(dist_mat);
+  sorted_t *dist_mat_sort_x = 
+    get_dist_mat_sort_xy(dist_mat_x, dist_mat_sort);
+  sorted_t *dist_mat_sort_y = 
+    get_dist_mat_sort_xy(dist_mat_y, dist_mat_sort);
 
-  printf("pd_mat_sort_x->mmat:\n");
-  print_mat(pd_mat_sort_x->mmat);
-  //printf("pd_mat_sort_x->midx:\n");
-  //print_mat_int(pd_mat_sort_x->midx);
+  printf("dist_mat_sort_x->mmat:\n");
+  print_mat(dist_mat_sort_x->mmat);
+  //printf("dist_mat_sort_x->midx:\n");
+  //print_mat_int(dist_mat_sort_x->midx);
 
-  printf("pd_mat_sort_y->mmat:\n");
-  print_mat(pd_mat_sort_y->mmat);
-  //printf("pd_mat_sort_y->midx:\n");
-  //print_mat_int(pd_mat_sort_y->midx);
+  printf("dist_mat_sort_y->mmat:\n");
+  print_mat(dist_mat_sort_y->mmat);
+  //printf("dist_mat_sort_y->midx:\n");
+  //print_mat_int(dist_mat_sort_y->midx);
 
-  printf("pd_mat_sort->mmat:\n");
-  print_mat(pd_mat_sort->mmat);
-  printf("pd_mat_sort->midx:\n");
-  print_mat_int(pd_mat_sort->midx);
+  printf("dist_mat_sort->mmat:\n");
+  print_mat(dist_mat_sort->mmat);
+  printf("dist_mat_sort->midx:\n");
+  print_mat_int(dist_mat_sort->midx);
 
   // free all the dynamically allocated variables
   free(pd_x);
   free(pd_y);
   free(pd);
 
-  free_mat(pd_mat_x);
-  free_mat(pd_mat_y);
-  free_mat(pd_mat);
+  free_mat(dist_mat_x);
+  free_mat(dist_mat_y);
+  free_mat(dist_mat);
 
-  free_mat_sort(pd_mat_sort_x);
-  free_mat_sort(pd_mat_sort_y);
-  free_mat_sort(pd_mat_sort);
+  free_mat_sort(dist_mat_sort_x);
+  free_mat_sort(dist_mat_sort_y);
+  free_mat_sort(dist_mat_sort);
   return 0;
 }
