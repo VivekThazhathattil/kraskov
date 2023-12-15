@@ -368,10 +368,14 @@ double* get_psi(int* vals, int n){
 }
 
 int main(){
-  double  x[4] = {1, 2, 3, 4}; // 1st random variable 
-  double  y[4] = {1, 5, 4, 9}; // 2nd random variable
+  //double x[11] = {0,  2.9389,  4.7553,  4.7553,  2.9389,  0.0000, -2.9389, -4.7553, -4.7553, -2.9389, -0.0000};
+  //double y[11] = {0,  9.5106, -5.8779, -5.8779,  9.5106,  0.0000, -9.5106,  5.8779,  5.8779, -9.5106, -0.000};
+  //double  x[4] = {1, 2, 3, 4}; // 1st random variable 
+  //double  y[4] = {1, 5, 4, 9}; // 2nd random variable
+  double x[5] = {0,  2.9389,  4.7553,  4.7553,  2.9389};
+  double y[5] = {0,  9.5106, -5.8779, -5.8779,  9.5106};
   int k = 3; // num nearest neighbors
-  int n = 4; // num time snapshots
+  int n = 5; // num time snapshots
 
   remove_mean(x, n);
   remove_mean(y, n);
@@ -435,12 +439,17 @@ int main(){
   double *eps_x = get_kth_dist(k, dist_mat_sort_x);
   double *eps_y = get_kth_dist(k, dist_mat_sort_y);
 
-  modify_eps(eps_x, eps_y, dist_mat_sort_x, 
-      dist_mat_sort_y, k);
-
   printf("eps_x:\n");
   print_array(eps_x, n);
   printf("eps_y:\n");
+  print_array(eps_y, n);
+
+  modify_eps(eps_x, eps_y, dist_mat_sort_x, 
+      dist_mat_sort_y, k);
+
+  printf("eps_x (modified):\n");
+  print_array(eps_x, n);
+  printf("eps_y (modified):\n");
   print_array(eps_y, n);
 
   int* nx = get_dist_count(dist_mat_x, eps_x);
