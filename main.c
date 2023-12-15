@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "digamma.h"
+
 typedef struct MAT_s{
 // nr: num rows, nc: num cols
   int nr, nc; 
@@ -355,6 +357,15 @@ int* get_dist_count(mat_t* dmat, double* eps){
   return count;
 }
 
+double* get_psi(int* vals, int n){
+  int i;
+  double* res = (double*) malloc(sizeof(double) * n);
+  for(i = 0; i < n; ++i){
+    res[i] = (double) psi((double)vals[i]);
+  }
+  return res;
+}
+
 int main(){
   double  x[4] = {1, 2, 3, 4}; // 1st random variable 
   double  y[4] = {1, 5, 4, 9}; // 2nd random variable
@@ -439,6 +450,16 @@ int main(){
   printf("ny:\n");
   print_array_int(ny, n);
 
+  double* psi_vals_x = get_psi(nx, n);
+  double* psi_vals_y = get_psi(ny, n);
+  double mean_psi_x = mean(psi_vals_x, n);
+  double mean_psi_y = mean(psi_vals_y, n);
+
+  printf("mean_psi_x: %0.4lf, mean_psi_y: %0.4lf\n", mean_psi_x, mean_psi_y);
+
+  double mi = psi(k) - (1.0/(double)k) - mean_psi_x - mean_psi_y + psi(n);
+  printf("MI = %lf\n", mi);
+
   // free all the dynamically allocated variables
   free(pd_x);
   free(pd_y);
@@ -457,5 +478,9 @@ int main(){
 
   free(nx);
   free(ny);
+
+  free(psi_vals_x);
+  free(psi_vals_y);
+
   return 0;
 }
