@@ -167,6 +167,15 @@ void print_array(double *arr, int n){
   return;
 }
 
+void print_array_int(int *arr, int n){
+  int i;
+  for(i = 0; i < n; ++i){
+    printf("%d ", arr[i]);
+  }
+  printf("\n");
+  return;
+}
+
 double* pdist(double *arr, int n){
   int i, j, k = 0;
   int m = ((n - 1)*n)/2;
@@ -261,7 +270,6 @@ void spec_copy(spec_elm_t* elms, sorted_t* sd, int idx){
   return;
 }
 
-//lTODO:
 sorted_t* sort_each_row(mat_t* mat){
   int i;
   sorted_t* sd = (sorted_t*) malloc(sizeof(sorted_t));
@@ -291,6 +299,60 @@ sorted_t* get_dist_mat_sort_xy(mat_t* mat, sorted_t* sd){
     }
   }
   return res;
+}
+
+double* get_kth_dist(int k, sorted_t* sd){
+  if(k >= (sd->mmat)->nr){
+    printf("ERROR: Number of time snapshots cannot be <= k \n");
+    exit(1);
+  }
+  double* res = 
+    (double*) malloc(sizeof(double) * (sd->mmat)->nr);
+  int i;
+  for(i = 0; i < (sd->mmat)->nr; ++i){
+    res[i] = (sd->mmat)->m[i][k];
+  }
+  return res;
+}
+
+void modify_eps(double* eps_x, double* eps_y, 
+    sorted_t* sd_x, sorted_t* sd_y, int k){
+ int n = (sd_x->mmat)->nr, i, j;
+ for(i = 0; i < n; ++i){
+  int flag_y = 1;
+  for(j = k - 1; j >= 1; --j){
+    if((sd_x->mmat)->m[i][j] > eps_x[i]){
+      eps_x[i] = (sd_x->mmat)->m[i][j];
+      flag_y = 0;
+    }
+  }
+  if(flag_y){
+    for(j = k - 1; j >= 1; --j){
+      if((sd_y->mmat)->m[i][j] > eps_y[i]){
+        eps_y[i] = (sd_y->mmat)->m[i][j];
+      }
+    }
+  }
+ }
+ return;
+}
+
+int* get_dist_count(mat_t* dmat, double* eps){
+  int* count = (int*) malloc(sizeof(int) * dmat->nr);
+  int i, j, sum;
+  for(i = 0; i < dmat->nr; ++i){
+    sum = 0;
+    for(j = 0; j < dmat->nc; ++j){
+      if(dmat->m[i][j] <= eps[i]){
+        ++sum;
+      }
+    }
+    count[i] = sum - 1;
+    if(count[i] < 0){
+      count[i] = 0;
+    }
+  }
+  return count;
 }
 
 int main(){
@@ -358,6 +420,25 @@ int main(){
   printf("dist_mat_sort->midx:\n");
   print_mat_int(dist_mat_sort->midx);
 
+  double *eps_x = get_kth_dist(k, dist_mat_sort_x);
+  double *eps_y = get_kth_dist(k, dist_mat_sort_y);
+
+  modify_eps(eps_x, eps_y, dist_mat_sort_x, 
+      dist_mat_sort_y, k);
+
+  printf("eps_x:\n");
+  print_array(eps_x, n);
+  printf("eps_y:\n");
+  print_array(eps_y, n);
+
+  int* nx = get_dist_count(dist_mat_x, eps_x);
+  int* ny = get_dist_count(dist_mat_y, eps_y);
+
+  printf("nx:\n");
+  print_array_int(nx, n);
+  printf("ny:\n");
+  print_array_int(ny, n);
+
   // free all the dynamically allocated variables
   free(pd_x);
   free(pd_y);
@@ -370,5 +451,11 @@ int main(){
   free_mat_sort(dist_mat_sort_x);
   free_mat_sort(dist_mat_sort_y);
   free_mat_sort(dist_mat_sort);
+
+  free(eps_x);
+  free(eps_y);
+
+  free(nx);
+  free(ny);
   return 0;
 }
