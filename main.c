@@ -278,6 +278,21 @@ sorted_t* sort_each_row(mat_t* mat){
   return sd;
 }
 
+sorted_t* get_pd_mat_sort_xy(mat_t* mat, sorted_t* sd){
+  sorted_t* res = (sorted_t*) malloc(sizeof(sorted_t));
+  res->mmat = init_mat(mat->nr, mat->nc);
+  res->midx = init_mat_int(mat->nr, mat->nc);
+  mat_int_t *tm = (sd->midx);
+  int i, j;
+  for(i = 0; i < tm->nr; ++i){
+    for(j = 0; j < tm->nc; ++j){
+      (res->mmat)->m[i][j] = mat->m[i][tm->m[i][j]];
+      (res->midx)->m[i][j] = tm->m[i][j];
+    }
+  }
+  return res;
+}
+
 int main(){
   double  x[3] = {1, 2, 3}; // 1st random variable 
   double  y[3] = {1, 5, 4}; // 2nd random variable
@@ -322,19 +337,21 @@ int main(){
   printf("pd_mat:\n");
   print_mat(pd_mat);
 
-  sorted_t *pd_mat_sort_x = sort_each_row(pd_mat_x);
-  sorted_t *pd_mat_sort_y = sort_each_row(pd_mat_y);
   sorted_t *pd_mat_sort = sort_each_row(pd_mat);
+  sorted_t *pd_mat_sort_x = 
+    get_pd_mat_sort_xy(pd_mat_x, pd_mat_sort);
+  sorted_t *pd_mat_sort_y = 
+    get_pd_mat_sort_xy(pd_mat_y, pd_mat_sort);
 
   printf("pd_mat_sort_x->mmat:\n");
   print_mat(pd_mat_sort_x->mmat);
-  printf("pd_mat_sort_x->midx:\n");
-  print_mat_int(pd_mat_sort_x->midx);
+  //printf("pd_mat_sort_x->midx:\n");
+  //print_mat_int(pd_mat_sort_x->midx);
 
   printf("pd_mat_sort_y->mmat:\n");
   print_mat(pd_mat_sort_y->mmat);
-  printf("pd_mat_sort_y->midx:\n");
-  print_mat_int(pd_mat_sort_y->midx);
+  //printf("pd_mat_sort_y->midx:\n");
+  //print_mat_int(pd_mat_sort_y->midx);
 
   printf("pd_mat_sort->mmat:\n");
   print_mat(pd_mat_sort->mmat);
