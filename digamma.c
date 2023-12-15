@@ -1,3 +1,5 @@
+/* Ref: https://github.com/jlizier/jidt/blob/master/cuda/digamma.h */
+
 #include <math.h>
 #include "digamma.h"
 

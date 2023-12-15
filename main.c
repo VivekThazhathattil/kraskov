@@ -1,3 +1,4 @@
+/* Ref: https://github.com/stefgrs/Mutual-Information-script/blob/master/MIpair2.m */
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
