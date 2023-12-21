@@ -1,15 +1,10 @@
 /* Ref: https://github.com/stefgrs/Mutual-Information-script/blob/master/MIpair2.m */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
+#include "data_handler.h"
 #include "digamma.h"
-
-typedef struct MAT_s{
-// nr: num rows, nc: num cols
-  int nr, nc; 
-  double **m;
-} mat_t;
 
 typedef struct SPEC_ELM_s{
   double val;
