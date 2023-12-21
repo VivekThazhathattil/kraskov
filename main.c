@@ -3,104 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "mat_utils.h"
 #include "data_handler.h"
 #include "digamma.h"
+#include "print_utils.h"
 
 typedef struct SPEC_ELM_s{
   double val;
   int idx;
 } spec_elm_t;
-
-typedef struct MAT_INT_s{
-// nr: num rows, nc: num cols
-  int nr, nc; 
-  int **m;
-} mat_int_t;
-
-typedef struct SORTED_s{
-  struct MAT_s *mmat;
-  struct MAT_INT_s *midx;
-} sorted_t;
-
-mat_t* init_mat(int nrows, int ncols){
-  mat_t *mat = (mat_t*) malloc(sizeof(mat_t));
-  mat->nr = nrows;
-  mat->nc = ncols;
-  mat->m =
-    (double**) malloc(sizeof(double*) * mat->nr);
-  int i;
-  for(i = 0; i < mat->nr; ++i){
-    mat->m[i] =
-      (double*) malloc(sizeof(double) * mat->nc);
-  }
-  return mat;
-}
-
-mat_int_t* init_mat_int(int nrows, int ncols){
-  mat_int_t *mat = (mat_int_t*) malloc(sizeof(mat_t));
-  mat->nr = nrows;
-  mat->nc = ncols;
-  mat->m =
-    (int**) malloc(sizeof(int*) * mat->nr);
-  int i;
-  for(i = 0; i < mat->nr; ++i){
-    mat->m[i] =
-      (int*) malloc(sizeof(int) * mat->nc);
-  }
-  return mat;
-}
-
-void print_mat(mat_t *mat){
-  int i, j;
-  for(i = 0; i < mat->nr; ++i){
-    for(j = 0; j < mat->nc; ++j){
-      printf("%0.4lf ", mat->m[i][j]);
-    }
-    printf("\n");
-  }
-  printf("\n");
-  return; 
-}
-
-void print_mat_int(mat_int_t *mat){
-  int i, j;
-  for(i = 0; i < mat->nr; ++i){
-    for(j = 0; j < mat->nc; ++j){
-      printf("%d ", mat->m[i][j]);
-    }
-    printf("\n");
-  }
-  printf("\n");
-  return; 
-}
-
-void free_mat(mat_t* mat){
-  int i;
-  for(i = 0; i < mat->nr; ++i){
-    free(mat->m[i]);
-  }
-  free(mat->m);
-  free(mat);
-  return;
-}
-
-void free_mat_int(mat_int_t* mat){
-  int i;
-  for(i = 0; i < mat->nr; ++i){
-    free(mat->m[i]);
-  }
-  free(mat->m);
-  free(mat);
-  return;
-}
-
-void free_mat_sort(sorted_t* sd){
-  free_mat(sd->mmat);
-  free_mat_int(sd->midx);
-  free(sd);
-  return;
-}
-
 
 double vabs(double num){
   if(num > 0){
@@ -156,24 +67,6 @@ void std_normalize(double *arr, int n){
   }
 }
 
-void print_array(double *arr, int n){
-  int i;
-  for(i = 0; i < n; ++i){
-    printf("%0.4lf ", arr[i]);
-  }
-  printf("\n");
-  return;
-}
-
-void print_array_int(int *arr, int n){
-  int i;
-  for(i = 0; i < n; ++i){
-    printf("%d ", arr[i]);
-  }
-  printf("\n");
-  return;
-}
-
 double* pdist(double *arr, int n){
   int i, j, k = 0;
   int m = ((n - 1)*n)/2;
@@ -216,16 +109,6 @@ mat_t* square_form(double* arr, int n){
     }
   }
   return mat;
-}
-
-void copy_mat(mat_t *src, mat_t *dest){
-  int i, j;
-  for(i = 0; i < src->nr; ++i){
-    for(j = 0; j < src->nc; ++j){
-      dest->m[i][j] = src->m[i][j];
-    }
-  }
-  return;
 }
 
 void copy_mat_val_idx(double *src, int n, spec_elm_t* elms){
@@ -363,14 +246,15 @@ double* get_psi(int* vals, int n){
 }
 
 int main(){
-  //double x[11] = {0,  2.9389,  4.7553,  4.7553,  2.9389,  0.0000, -2.9389, -4.7553, -4.7553, -2.9389, -0.0000};
-  //double y[11] = {0,  9.5106, -5.8779, -5.8779,  9.5106,  0.0000, -9.5106,  5.8779,  5.8779, -9.5106, -0.000};
-  //double  x[4] = {1, 2, 3, 4}; // 1st random variable 
-  //double  y[4] = {1, 5, 4, 9}; // 2nd random variable
-  double x[5] = {0,  2.9389,  4.7553,  4.7553,  2.9389};
-  double y[5] = {0,  9.5106, -5.8779, -5.8779,  9.5106};
+  /* h5ls should return output of dimensions `nsamples x nfeatures` */
+  mat_t* dat = get_data("data/dset_test1_kraskov.h5", "/ds");
+  double* x = dat->m[0];
+  double* y = dat->m[1];
+
   int k = 3; // num nearest neighbors
-  int n = 5; // num time snapshots
+  int n = dat->nc; // num time snapshots
+
+  printf("no. rows = %d, no. cols = %d\n", dat->nr, dat->nc);
 
   remove_mean(x, n);
   remove_mean(y, n);
@@ -378,10 +262,10 @@ int main(){
   std_normalize(x, n);
   std_normalize(y, n);
 
-  printf("x:\n");
-  print_array(x, n);
-  printf("y:\n");
-  print_array(y, n);
+  //printf("x:\n");
+  //print_array(x, n);
+  //printf("y:\n");
+  //print_array(y, n);
 
   // Get pdist between each time snapshot for a given time series
 
@@ -389,26 +273,29 @@ int main(){
   double *pd_y = pdist(y, n);
 
   int n_pd = (n*(n-1))/2;
-  printf("pd_x:\n");
-  print_array(pd_x, n_pd);
-  printf("pd_y:\n");
-  print_array(pd_y, n_pd);
+  //printf("pd_x:\n");
+  //print_array(pd_x, n_pd);
+  //printf("pd_y:\n");
+  //print_array(pd_y, n_pd);
 
   double *pd = max_bw_two_array_elms(pd_x, pd_y, n_pd);
-  printf("pd:\n");
-  print_array(pd, n_pd);
+  //printf("pd:\n");
+  //print_array(pd, n_pd);
+  
+  printf("[VIVEK]2a\n");
 
   mat_t *dist_mat_x = square_form(pd_x, n);
   mat_t *dist_mat_y = square_form(pd_y, n);
   mat_t *dist_mat = square_form(pd, n);
 
-  printf("\n");
-  printf("dist_mat_x:\n");
-  print_mat(dist_mat_x);
-  printf("dist_mat_y:\n");
-  print_mat(dist_mat_y);
-  printf("dist_mat:\n");
-  print_mat(dist_mat);
+  printf("[VIVEK]3\n");
+  //printf("\n");
+  //printf("dist_mat_x:\n");
+  //print_mat(dist_mat_x);
+  //printf("dist_mat_y:\n");
+  //print_mat(dist_mat_y);
+  //printf("dist_mat:\n");
+  //print_mat(dist_mat);
 
   sorted_t *dist_mat_sort = sort_each_row(dist_mat);
   sorted_t *dist_mat_sort_x = 
@@ -416,50 +303,55 @@ int main(){
   sorted_t *dist_mat_sort_y = 
     get_dist_mat_sort_xy(dist_mat_y, dist_mat_sort);
 
-  printf("dist_mat_sort_x->mmat:\n");
-  print_mat(dist_mat_sort_x->mmat);
+  //printf("dist_mat_sort_x->mmat:\n");
+  //print_mat(dist_mat_sort_x->mmat);
   //printf("dist_mat_sort_x->midx:\n");
   //print_mat_int(dist_mat_sort_x->midx);
+  printf("[VIVEK]4\n");
 
-  printf("dist_mat_sort_y->mmat:\n");
-  print_mat(dist_mat_sort_y->mmat);
+  //printf("dist_mat_sort_y->mmat:\n");
+  //print_mat(dist_mat_sort_y->mmat);
   //printf("dist_mat_sort_y->midx:\n");
   //print_mat_int(dist_mat_sort_y->midx);
 
-  printf("dist_mat_sort->mmat:\n");
-  print_mat(dist_mat_sort->mmat);
-  printf("dist_mat_sort->midx:\n");
-  print_mat_int(dist_mat_sort->midx);
+  //printf("dist_mat_sort->mmat:\n");
+  //print_mat(dist_mat_sort->mmat);
+  //printf("dist_mat_sort->midx:\n");
+  //print_mat_int(dist_mat_sort->midx);
 
   double *eps_x = get_kth_dist(k, dist_mat_sort_x);
   double *eps_y = get_kth_dist(k, dist_mat_sort_y);
 
-  printf("eps_x:\n");
-  print_array(eps_x, n);
-  printf("eps_y:\n");
-  print_array(eps_y, n);
+  printf("[VIVEK]5\n");
+  //printf("eps_x:\n");
+  //print_array(eps_x, n);
+  //printf("eps_y:\n");
+  //print_array(eps_y, n);
 
   modify_eps(eps_x, eps_y, dist_mat_sort_x, 
       dist_mat_sort_y, k);
 
-  printf("eps_x (modified):\n");
-  print_array(eps_x, n);
-  printf("eps_y (modified):\n");
-  print_array(eps_y, n);
+  //printf("eps_x (modified):\n");
+  //print_array(eps_x, n);
+  //printf("eps_y (modified):\n");
+  //print_array(eps_y, n);
+  printf("[VIVEK]6\n");
 
   int* nx = get_dist_count(dist_mat_x, eps_x);
   int* ny = get_dist_count(dist_mat_y, eps_y);
 
-  printf("nx:\n");
-  print_array_int(nx, n);
-  printf("ny:\n");
-  print_array_int(ny, n);
+  //printf("nx:\n");
+  //print_array_int(nx, n);
+  //printf("ny:\n");
+  //print_array_int(ny, n);
+  printf("[VIVEK]7\n");
 
   double* psi_vals_x = get_psi(nx, n);
   double* psi_vals_y = get_psi(ny, n);
   double mean_psi_x = mean(psi_vals_x, n);
   double mean_psi_y = mean(psi_vals_y, n);
 
+  printf("[VIVEK]8\n");
   printf("mean_psi_x: %0.4lf, mean_psi_y: %0.4lf\n", mean_psi_x, mean_psi_y);
 
   double mi = psi(k) - (1.0/(double)k) - mean_psi_x - mean_psi_y + psi(n);
