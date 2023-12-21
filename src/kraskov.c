@@ -271,14 +271,18 @@ double* get_psi(int* vals, int n)
 
 
 /*-------------------------------------------------------------*/
-double kraskov_mi(double* x, double* y, int n, int k)
+double kraskov_mi(double* x, double* y, int n, int k,
+    char normalize)
 /*-------------------------------------------------------------*/
 {
-  remove_mean(x, n);
-  remove_mean(y, n);
 
-  std_normalize(x, n);
-  std_normalize(y, n);
+  if(normalize == 'y' || normalize == 'Y'){
+    remove_mean(x, n);
+    std_normalize(x, n);
+
+    remove_mean(y, n);
+    std_normalize(y, n);
+  }
 
   // Get pdist between each time snapshot for a given time series
   double *pd_x = pdist(x, n); 

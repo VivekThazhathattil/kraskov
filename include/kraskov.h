@@ -33,6 +33,6 @@ double* get_kth_dist(int k, sorted_t*);
 void modify_eps(double*, double*, sorted_t*, sorted_t*, int);
 int* get_dist_count(mat_t*, double*);
 double* get_psi(int*, int);
-double kraskov_mi(double*, double*, int, int);
+double kraskov_mi(double*, double*, int, int, char);
 
 #endif
