@@ -282,13 +282,10 @@ int main(){
   //printf("pd:\n");
   //print_array(pd, n_pd);
   
-  printf("[VIVEK]2a\n");
-
   mat_t *dist_mat_x = square_form(pd_x, n);
   mat_t *dist_mat_y = square_form(pd_y, n);
   mat_t *dist_mat = square_form(pd, n);
 
-  printf("[VIVEK]3\n");
   //printf("\n");
   //printf("dist_mat_x:\n");
   //print_mat(dist_mat_x);
@@ -307,7 +304,6 @@ int main(){
   //print_mat(dist_mat_sort_x->mmat);
   //printf("dist_mat_sort_x->midx:\n");
   //print_mat_int(dist_mat_sort_x->midx);
-  printf("[VIVEK]4\n");
 
   //printf("dist_mat_sort_y->mmat:\n");
   //print_mat(dist_mat_sort_y->mmat);
@@ -322,7 +318,6 @@ int main(){
   double *eps_x = get_kth_dist(k, dist_mat_sort_x);
   double *eps_y = get_kth_dist(k, dist_mat_sort_y);
 
-  printf("[VIVEK]5\n");
   //printf("eps_x:\n");
   //print_array(eps_x, n);
   //printf("eps_y:\n");
@@ -335,7 +330,6 @@ int main(){
   //print_array(eps_x, n);
   //printf("eps_y (modified):\n");
   //print_array(eps_y, n);
-  printf("[VIVEK]6\n");
 
   int* nx = get_dist_count(dist_mat_x, eps_x);
   int* ny = get_dist_count(dist_mat_y, eps_y);
@@ -344,14 +338,12 @@ int main(){
   //print_array_int(nx, n);
   //printf("ny:\n");
   //print_array_int(ny, n);
-  printf("[VIVEK]7\n");
 
   double* psi_vals_x = get_psi(nx, n);
   double* psi_vals_y = get_psi(ny, n);
   double mean_psi_x = mean(psi_vals_x, n);
   double mean_psi_y = mean(psi_vals_y, n);
 
-  printf("[VIVEK]8\n");
   printf("mean_psi_x: %0.4lf, mean_psi_y: %0.4lf\n", mean_psi_x, mean_psi_y);
 
   double mi = psi(k) - (1.0/(double)k) - mean_psi_x - mean_psi_y + psi(n);
