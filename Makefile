@@ -17,3 +17,7 @@ kraskov:
 		$(SRC)/main.c \
 		-o $(OUT_NAME) -I$(INCLUDE);
 	mv *.o $(OUT_DIR);
+
+clean:
+	rm -rf $(OUT_DIR);
+	rm $(OUT_NAME);

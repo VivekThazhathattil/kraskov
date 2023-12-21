@@ -1,6 +1,9 @@
 #include "kraskov.h"
 
-double mean(double *arr, int n){
+/*-------------------------------------------------------------*/
+double mean(double *arr, int n)
+/*-------------------------------------------------------------*/
+{
   int i;
   double sum = 0.0;
   for(i = 0; i < n; ++i){
@@ -9,7 +12,10 @@ double mean(double *arr, int n){
   return sum/n;
 }
 
-void remove_mean(double *arr, int n){
+/*-------------------------------------------------------------*/
+void remove_mean(double *arr, int n)
+/*-------------------------------------------------------------*/
+{
   double m = mean(arr, n);
   int i;
   for(i = 0; i < n; ++i){
@@ -18,7 +24,10 @@ void remove_mean(double *arr, int n){
   return;
 }
 
-double std(double *arr, int n){
+/*-------------------------------------------------------------*/
+double std(double *arr, int n)
+/*-------------------------------------------------------------*/
+{
   int i;
   double m = mean(arr, n);
   double sum = 0;
@@ -32,7 +41,10 @@ double std(double *arr, int n){
   return sqrt(sum/(n - 1));
 }
 
-void std_normalize(double *arr, int n){
+/*-------------------------------------------------------------*/
+void std_normalize(double *arr, int n)
+/*-------------------------------------------------------------*/
+{
   double d = std(arr, n);
   int i;
   for(i = 0; i < n; ++i){
@@ -40,7 +52,10 @@ void std_normalize(double *arr, int n){
   }
 }
 
-double* pdist(double *arr, int n){
+/*-------------------------------------------------------------*/
+double* pdist(double *arr, int n)
+/*-------------------------------------------------------------*/
+{
   int i, j, k = 0;
   int m = ((n - 1)*n)/2;
   double *res = (double*) calloc(m, sizeof(double));
@@ -53,7 +68,10 @@ double* pdist(double *arr, int n){
   return res;
 }
 
-double* max_bw_two_array_elms(double *a, double *b, int n){
+/*-------------------------------------------------------------*/
+double* max_bw_two_array_elms(double *a, double *b, int n)
+/*-------------------------------------------------------------*/
+{
   int i;
   double* c = (double*) malloc(sizeof(double) * n);
   for(i = 0; i < n; ++i){
@@ -62,7 +80,10 @@ double* max_bw_two_array_elms(double *a, double *b, int n){
   return c;
 }
 
-mat_t* square_form(double* arr, int n){
+/*-------------------------------------------------------------*/
+mat_t* square_form(double* arr, int n)
+/*-------------------------------------------------------------*/
+{
   mat_t* mat = init_mat(n, n);
   int i, j, k = 0;
   for(i = 0; i < mat->nr; ++i){
@@ -84,7 +105,10 @@ mat_t* square_form(double* arr, int n){
   return mat;
 }
 
-void copy_mat_val_idx(double *src, int n, spec_elm_t* elms){
+/*-------------------------------------------------------------*/
+void copy_mat_val_idx(double *src, int n, spec_elm_t* elms)
+/*-------------------------------------------------------------*/
+{
   int i;
   for(i = 0; i < n; ++i){
     elms[i].val = src[i];
@@ -93,7 +117,10 @@ void copy_mat_val_idx(double *src, int n, spec_elm_t* elms){
   return;
 }
 
-void create_index_mat(mat_int_t *mat){
+/*-------------------------------------------------------------*/
+void create_index_mat(mat_int_t *mat)
+/*-------------------------------------------------------------*/
+{
   int i, j;
   for(i = 0; i < mat->nr; ++i){
     for(j = 0; j < mat->nc; ++j){
@@ -103,7 +130,10 @@ void create_index_mat(mat_int_t *mat){
   return;
 }
 
-int comp_fn1(const void* l, const void* r){
+/*-------------------------------------------------------------*/
+int comp_fn1(const void* l, const void* r)
+/*-------------------------------------------------------------*/
+{
   double res = ((spec_elm_t*)l)->val - ((spec_elm_t*)r)->val;
   if(res < 0){
     return -1;
@@ -114,7 +144,10 @@ int comp_fn1(const void* l, const void* r){
   return 1;
 }
 
-void spec_copy(spec_elm_t* elms, sorted_t* sd, int idx){
+/*-------------------------------------------------------------*/
+void spec_copy(spec_elm_t* elms, sorted_t* sd, int idx)
+/*-------------------------------------------------------------*/
+{
   int j; 
   for(j = 0; j < (sd->mmat)->nc; ++j){
     //printf("%lf %d\n", elms[j].val, elms[j].idx);
@@ -124,7 +157,10 @@ void spec_copy(spec_elm_t* elms, sorted_t* sd, int idx){
   return;
 }
 
-sorted_t* sort_each_row(mat_t* mat){
+/*-------------------------------------------------------------*/
+sorted_t* sort_each_row(mat_t* mat)
+/*-------------------------------------------------------------*/
+{
   int i;
   sorted_t* sd = (sorted_t*) malloc(sizeof(sorted_t));
   spec_elm_t* elms = 
@@ -140,7 +176,10 @@ sorted_t* sort_each_row(mat_t* mat){
   return sd;
 }
 
-sorted_t* get_dist_mat_sort_xy(mat_t* mat, sorted_t* sd){
+/*-------------------------------------------------------------*/
+sorted_t* get_dist_mat_sort_xy(mat_t* mat, sorted_t* sd)
+/*-------------------------------------------------------------*/
+{
   sorted_t* res = (sorted_t*) malloc(sizeof(sorted_t));
   res->mmat = init_mat(mat->nr, mat->nc);
   res->midx = init_mat_int(mat->nr, mat->nc);
@@ -155,7 +194,10 @@ sorted_t* get_dist_mat_sort_xy(mat_t* mat, sorted_t* sd){
   return res;
 }
 
-double* get_kth_dist(int k, sorted_t* sd){
+/*-------------------------------------------------------------*/
+double* get_kth_dist(int k, sorted_t* sd)
+/*-------------------------------------------------------------*/
+{
   if(k >= (sd->mmat)->nr){
     printf("ERROR: Number of time snapshots cannot be <= k \n");
     exit(1);
@@ -169,8 +211,11 @@ double* get_kth_dist(int k, sorted_t* sd){
   return res;
 }
 
+/*-------------------------------------------------------------*/
 void modify_eps(double* eps_x, double* eps_y, 
-    sorted_t* sd_x, sorted_t* sd_y, int k){
+    sorted_t* sd_x, sorted_t* sd_y, int k)
+/*-------------------------------------------------------------*/
+{
  int n = (sd_x->mmat)->nr, i, j;
  for(i = 0; i < n; ++i){
   int flag_y = 1;
@@ -191,7 +236,10 @@ void modify_eps(double* eps_x, double* eps_y,
  return;
 }
 
-int* get_dist_count(mat_t* dmat, double* eps){
+/*-------------------------------------------------------------*/
+int* get_dist_count(mat_t* dmat, double* eps)
+/*-------------------------------------------------------------*/
+{
   int* count = (int*) malloc(sizeof(int) * dmat->nr);
   int i, j, sum;
   for(i = 0; i < dmat->nr; ++i){
@@ -209,7 +257,10 @@ int* get_dist_count(mat_t* dmat, double* eps){
   return count;
 }
 
-double* get_psi(int* vals, int n){
+/*-------------------------------------------------------------*/
+double* get_psi(int* vals, int n)
+/*-------------------------------------------------------------*/
+{
   int i;
   double* res = (double*) malloc(sizeof(double) * n);
   for(i = 0; i < n; ++i){
@@ -219,7 +270,10 @@ double* get_psi(int* vals, int n){
 }
 
 
-double kraskov_mi(double* x, double* y, int n, int k){
+/*-------------------------------------------------------------*/
+double kraskov_mi(double* x, double* y, int n, int k)
+/*-------------------------------------------------------------*/
+{
   remove_mean(x, n);
   remove_mean(y, n);
 
@@ -257,9 +311,11 @@ double kraskov_mi(double* x, double* y, int n, int k){
   double mean_psi_x = mean(psi_vals_x, n);
   double mean_psi_y = mean(psi_vals_y, n);
 
-  printf("mean_psi_x: %0.4lf, mean_psi_y: %0.4lf\n", mean_psi_x, mean_psi_y);
+  printf("mean_psi_x: %0.4lf, mean_psi_y: %0.4lf\n", 
+      mean_psi_x, mean_psi_y);
 
-  double mi = psi(k) - (1.0/(double)k) - mean_psi_x - mean_psi_y + psi(n);
+  double mi = psi(k) - (1.0/(double)k) - 
+    mean_psi_x - mean_psi_y + psi(n);
   printf("MI = %lf\n", mi);
 
   // free all the dynamically allocated variables
