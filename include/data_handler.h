@@ -10,4 +10,5 @@
 	void free_mat_t(mat_t*);
 	void create_new_dset(hid_t, hid_t, char*, void*, char);
 	void save_to_h5(double*, int*, int*, long int, char*);
+  void save_vec_to_h5(double*, int, char*);
 #endif

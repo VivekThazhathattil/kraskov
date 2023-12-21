@@ -311,12 +311,12 @@ double kraskov_mi(double* x, double* y, int n, int k)
   double mean_psi_x = mean(psi_vals_x, n);
   double mean_psi_y = mean(psi_vals_y, n);
 
-  printf("mean_psi_x: %0.4lf, mean_psi_y: %0.4lf\n", 
-      mean_psi_x, mean_psi_y);
+  //printf("mean_psi_x: %0.4lf, mean_psi_y: %0.4lf\n", 
+  //    mean_psi_x, mean_psi_y);
 
   double mi = psi(k) - (1.0/(double)k) - 
     mean_psi_x - mean_psi_y + psi(n);
-  printf("MI = %lf\n", mi);
+  //printf("MI = %lf\n", mi);
 
   // free all the dynamically allocated variables
   free(pd_x);
@@ -342,3 +342,5 @@ double kraskov_mi(double* x, double* y, int n, int k)
 
   return mi;
 }
+
+/*-------------------------------------------------------------*/

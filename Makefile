@@ -1,5 +1,7 @@
 CC = h5pcc #h5cc
-FLAGS = -lm
+MATH_FLAG = -lm
+OPT_FLAG = -O3
+PARALLEL_FLAG = -fopenmp
 SRC=src
 OUT_DIR=out
 OUT_NAME=kraskov
@@ -7,7 +9,8 @@ INCLUDE=include/
 
 kraskov:
 	mkdir -p $(OUT_DIR);
-	$(CC) $(FLAGS) \
+	$(CC) $(MATH_FLAG) \
+		$(OPT_FLAG) $(PARALLEL_FLAG)\
 		$(SRC)/oth_utils.c \
 		$(SRC)/mat_utils.c \
 		$(SRC)/digamma.c \

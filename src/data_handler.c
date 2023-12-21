@@ -114,7 +114,7 @@ void save_to_h5(double* val, int* row, int* col,
 	long int num_elms, char* op_file_name)
 /*-------------------------------------------------------------*/
 {
-	hid_t file_id, dset_id, dspace_id;
+	hid_t file_id, dspace_id;
 	file_id = H5Fcreate(op_file_name, H5F_ACC_TRUNC, H5P_DEFAULT,
 		H5P_DEFAULT);
 	// H5F_ACC_TRUNC: overwrite existing files
@@ -126,3 +126,21 @@ void save_to_h5(double* val, int* row, int* col,
 	H5Sclose(dspace_id);
 	H5Fclose(file_id);
 }
+
+
+/*-------------------------------------------------------------*/
+void save_vec_to_h5(double* vals, int nelms, char* op_file_name)
+/*-------------------------------------------------------------*/
+{
+	hid_t file_id, dspace_id;
+	file_id = H5Fcreate(op_file_name, H5F_ACC_TRUNC, H5P_DEFAULT,
+		H5P_DEFAULT);
+	hsize_t dims[1] = {nelms};
+	dspace_id = H5Screate_simple(1, dims, NULL);
+	create_new_dset(file_id, dspace_id, "/res", vals, 'd');
+	H5Sclose(dspace_id);
+	H5Fclose(file_id);
+  return;
+}
+
+/*-------------------------------------------------------------*/
