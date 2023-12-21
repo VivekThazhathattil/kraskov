@@ -7,5 +7,13 @@ INCLUDE=include/
 
 kraskov:
 	mkdir -p $(OUT_DIR);
-	$(CC) $(FLAGS) $(SRC)/mat_utils.c $(SRC)/digamma.c $(SRC)/data_handler.c $(SRC)/print_utils.c $(SRC)/main.c -o $(OUT_NAME) -I$(INCLUDE);
+	$(CC) $(FLAGS) \
+		$(SRC)/oth_utils.c \
+		$(SRC)/mat_utils.c \
+		$(SRC)/digamma.c \
+		$(SRC)/data_handler.c \
+		$(SRC)/print_utils.c \
+		$(SRC)/kraskov.c \
+		$(SRC)/main.c \
+		-o $(OUT_NAME) -I$(INCLUDE);
 	mv *.o $(OUT_DIR);
